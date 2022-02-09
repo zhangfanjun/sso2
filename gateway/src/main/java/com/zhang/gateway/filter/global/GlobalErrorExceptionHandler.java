@@ -9,6 +9,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
@@ -31,16 +32,23 @@ public class GlobalErrorExceptionHandler implements ErrorWebExceptionHandler {
         if (response.isCommitted()) {
             return Mono.error(ex);
         }
+        CommonResponse resultMsg = new CommonResponse("500", ex.getMessage(), null);
         // JOSN格式返回
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
         if (ex instanceof ResponseStatusException) {
             response.setStatusCode(((ResponseStatusException) ex).getStatus());
         }
+        //处理token校验异常
+        if (ex instanceof InvalidTokenException){
+            log.error("无效token");
+            resultMsg = new CommonResponse("401", ex.getMessage(), null);
+        }
+
+        CommonResponse finalResultMsg = resultMsg;
         return response.writeWith(Mono.fromSupplier(() -> {
             DataBufferFactory bufferFactory = response.bufferFactory();
             try {
-                CommonResponse resultMsg = new CommonResponse("500", ex.getMessage(), null);
-                return bufferFactory.wrap(objectMapper.writeValueAsBytes(resultMsg));
+                return bufferFactory.wrap(objectMapper.writeValueAsBytes(finalResultMsg));
             } catch (JsonProcessingException e) {
                 log.error("Error writing response", ex);
                 return bufferFactory.wrap(new byte[0]);
