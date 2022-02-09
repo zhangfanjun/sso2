@@ -51,12 +51,12 @@ public class RequestHeaderSetFilter implements GlobalFilter{
         }
         OAuth2AccessToken oAuth2AccessToken = tokenStore.readAccessToken(token);
         Map<String, Object> additionalInformation = oAuth2AccessToken.getAdditionalInformation();
-        String username = additionalInformation.get("username").toString();
-        List<String> authories = (List<String>)additionalInformation.get("author");
+        String username = additionalInformation.get("user_name").toString();
+        List<String> authories = (List<String>)additionalInformation.get("authorities");
         //将用户信息封装到请求头
         ServerHttpRequest tokenRequest = exchange.getRequest().mutate()
                 .header("username", username)
-                .header("author",authories.toString()).build();
+                .header("authorities",authories.toString()).build();
         ServerWebExchange exchangeNew = exchange.mutate().request(tokenRequest).build();
 
         return chain.filter(exchangeNew);

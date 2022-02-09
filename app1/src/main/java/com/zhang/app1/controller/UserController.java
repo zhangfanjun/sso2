@@ -1,10 +1,10 @@
 package com.zhang.app1.controller;
 
+import com.netflix.ribbon.proxy.annotation.Http;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 
 /**
  * @Copyright 深圳金雅福控股集团有限公司
@@ -22,10 +22,12 @@ public class UserController {
         return null;
     }
 
-    @GetMapping(value = "get")
-    public Object get(){
+    @GetMapping(value = "/get")
+    public Object get(@RequestHeader("username") String username,@RequestHeader("authorities") String authorities){
         log.info("请求访问了");
-
-        return "";
+        HashMap<String, Object> re = new HashMap<>();
+        re.put("username",username);
+        re.put("authorities",authorities);
+        return re;
     }
 }
