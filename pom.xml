@@ -4,6 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<modules>
 		<module>oauther2</module>
+		<module>gateway</module>
 		<module>app1</module>
 	</modules>
 	<parent>

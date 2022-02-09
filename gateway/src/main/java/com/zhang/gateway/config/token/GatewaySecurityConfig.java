@@ -46,8 +46,8 @@ public class GatewaySecurityConfig {
         http.httpBasic().disable()
                 .csrf().disable()
                 .authorizeExchange()
-                //白名单放行
-                .pathMatchers(oauther2Config.getIgnoreUri()).permitAll()
+//                //白名单放行
+//                .pathMatchers(oauther2Config.getIgnoreUri()).permitAll()
                 //鉴权
                 .anyExchange().access(jwtAccessManager)
                 .and()
@@ -60,6 +60,10 @@ public class GatewaySecurityConfig {
                 .addFilterAt(corsWebFilter, SecurityWebFiltersOrder.CORS)
                 //替换token认证
                 .addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION);
+        //白名单可能是空指针，所以需要进行判断
+//        if(oauther2Config.getIgnoreUri().length>0){
+//            http.authorizeExchange().pathMatchers(oauther2Config.getIgnoreUri()).permitAll();
+//        }
         return http.build();
     }
 }
