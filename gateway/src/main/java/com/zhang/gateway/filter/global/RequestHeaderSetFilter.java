@@ -1,7 +1,7 @@
 package com.zhang.gateway.filter.global;
 
 import com.alibaba.fastjson.JSON;
-import com.zhang.gateway.properties.Oauther2Config;
+import com.zhang.gateway.properties.Oauther2Properties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,15 +33,15 @@ public class RequestHeaderSetFilter implements GlobalFilter {
     @Autowired
     private TokenStore tokenStore;
     @Autowired
-    private Oauther2Config oauther2Config;
+    private Oauther2Properties oauther2Properties;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         log.info("封装请求头");
         String requestUrl = exchange.getRequest().getPath().value();
         //判断是否在白名单的范围
-        List<String> ignoreUriList = oauther2Config.getIgnoreUriList();
-        if (!CollectionUtils.isEmpty(ignoreUriList) && ignoreUriList.contains(requestUrl)) {
+        List<String> ignoreUriList = oauther2Properties.getIgnoreUriList();
+        if (!CollectionUtils.isEmpty(ignoreUriList) && checkIgnoreUrl(ignoreUriList,requestUrl)) {
             log.info("白名单放行");
             return chain.filter(exchange);
         }
@@ -61,6 +61,25 @@ public class RequestHeaderSetFilter implements GlobalFilter {
         ServerWebExchange exchangeNew = exchange.mutate().request(tokenRequest).build();
 
         return chain.filter(exchangeNew);
+    }
+
+    /**
+     * 这里需要考虑白名单的写法是/**
+     * 这里不考虑*h号在中间的情况
+     */
+    private boolean checkIgnoreUrl(List<String> ignoreUriList, String requestUrl) {
+        for (String ignore : ignoreUriList) {
+            if (ignore.equals(requestUrl)) {
+                return true;
+            }
+            if (ignore.contains("*")) {
+                String uri = ignore.substring(0, ignore.indexOf("*"));
+                if (requestUrl.startsWith(uri)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private String getToken(ServerWebExchange exchange) {

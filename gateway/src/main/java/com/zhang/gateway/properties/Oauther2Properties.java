@@ -16,7 +16,7 @@ import java.util.List;
 @Data
 @Component
 @ConfigurationProperties(prefix = "oauther2")
-public class Oauther2Config {
+public class Oauther2Properties {
     String[] ignoreUri;
 
     public List<String> getIgnoreUriList() {

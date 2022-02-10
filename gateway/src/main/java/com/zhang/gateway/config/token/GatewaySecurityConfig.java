@@ -1,6 +1,6 @@
 package com.zhang.gateway.config.token;
 
-import com.zhang.gateway.properties.Oauther2Config;
+import com.zhang.gateway.properties.Oauther2Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +33,7 @@ public class GatewaySecurityConfig {
     @Autowired
     private CorsWebFilter corsWebFilter;
     @Autowired
-    private Oauther2Config oauther2Config;
+    private Oauther2Properties oauther2Properties;
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
@@ -44,8 +44,8 @@ public class GatewaySecurityConfig {
         http.httpBasic().disable()
                 .csrf().disable();
         //白名单可能是空指针，所以需要进行判断，注意这里必须放在anyExchange之前
-        if (oauther2Config.getIgnoreUri() != null && oauther2Config.getIgnoreUri().length > 0) {
-            http.authorizeExchange().pathMatchers(oauther2Config.getIgnoreUri()).permitAll();
+        if (oauther2Properties.getIgnoreUri() != null && oauther2Properties.getIgnoreUri().length > 0) {
+            http.authorizeExchange().pathMatchers(oauther2Properties.getIgnoreUri()).permitAll();
         }
         //鉴权
         http.authorizeExchange()

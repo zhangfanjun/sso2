@@ -61,6 +61,14 @@ public class MyAuthorizationServerConfig extends AuthorizationServerConfigurerAd
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
+                .withClient("user")
+                .secret(passwordEncoder.encode("123"))
+                .authorizedGrantTypes("implicit", "refresh_token", "password", "authorization_code", "client_credentials")
+                .authorities("admin", "user")
+                .scopes("read", "write", "all")
+                .accessTokenValiditySeconds(60000)
+                .refreshTokenValiditySeconds(120000)
+                .and()
                 .withClient("app-one")
                 .secret(passwordEncoder.encode("123"))
                 .authorizedGrantTypes("implicit", "refresh_token", "password", "authorization_code", "client_credentials")
