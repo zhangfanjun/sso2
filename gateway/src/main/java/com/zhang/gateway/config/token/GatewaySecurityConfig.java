@@ -1,8 +1,6 @@
 package com.zhang.gateway.config.token;
 
-import com.sun.deploy.util.ArrayUtil;
 import com.zhang.gateway.properties.Oauther2Config;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +11,6 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.server.resource.web.server.ServerBearerTokenAuthenticationConverter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 
 /**
@@ -37,18 +34,21 @@ public class GatewaySecurityConfig {
     private CorsWebFilter corsWebFilter;
     @Autowired
     private Oauther2Config oauther2Config;
+
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         //替换认证过滤器
         AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(authenticationManager);
         authenticationWebFilter.setServerAuthenticationConverter(new ServerBearerTokenAuthenticationConverter());
-        //配置白名单和访问规则，CommonEnum枚举类
+        //配置访问规则
         http.httpBasic().disable()
-                .csrf().disable()
-                .authorizeExchange()
-//                //白名单放行
-//                .pathMatchers(oauther2Config.getIgnoreUri()).permitAll()
-                //鉴权
+                .csrf().disable();
+        //白名单可能是空指针，所以需要进行判断，注意这里必须放在anyExchange之前
+        if (oauther2Config.getIgnoreUri() != null && oauther2Config.getIgnoreUri().length > 0) {
+            http.authorizeExchange().pathMatchers(oauther2Config.getIgnoreUri()).permitAll();
+        }
+        //鉴权
+        http.authorizeExchange()
                 .anyExchange().access(jwtAccessManager)
                 .and()
                 //token异常处理
@@ -60,10 +60,7 @@ public class GatewaySecurityConfig {
                 .addFilterAt(corsWebFilter, SecurityWebFiltersOrder.CORS)
                 //替换token认证
                 .addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION);
-        //白名单可能是空指针，所以需要进行判断
-//        if(oauther2Config.getIgnoreUri().length>0){
-//            http.authorizeExchange().pathMatchers(oauther2Config.getIgnoreUri()).permitAll();
-//        }
+
         return http.build();
     }
 }

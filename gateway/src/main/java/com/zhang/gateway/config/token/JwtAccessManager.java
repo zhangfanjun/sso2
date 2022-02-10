@@ -25,6 +25,7 @@ public class JwtAccessManager implements ReactiveAuthorizationManager<Authorizat
 
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> mono, AuthorizationContext authorizationContext) {
+        log.info("自定义权限校验");
         URI uri = authorizationContext.getExchange().getRequest().getURI();
         //TODO 从redis中获取uri的访问权限，这里采用allAuthority
         List<String> allAuthority= new ArrayList<>();

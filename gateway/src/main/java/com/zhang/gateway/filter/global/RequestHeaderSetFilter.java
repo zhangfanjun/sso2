@@ -1,14 +1,12 @@
 package com.zhang.gateway.filter.global;
 
-import com.google.common.collect.Lists;
+import com.alibaba.fastjson.JSON;
 import com.zhang.gateway.properties.Oauther2Config;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -19,7 +17,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Copyright 深圳金雅福控股集团有限公司
@@ -30,7 +29,7 @@ import java.util.*;
 @Slf4j
 @Component
 @Order(value = 1)
-public class RequestHeaderSetFilter implements GlobalFilter{
+public class RequestHeaderSetFilter implements GlobalFilter {
     @Autowired
     private TokenStore tokenStore;
     @Autowired
@@ -38,25 +37,27 @@ public class RequestHeaderSetFilter implements GlobalFilter{
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        log.info("封装请求头");
         String requestUrl = exchange.getRequest().getPath().value();
         //判断是否在白名单的范围
-        String[] ignoreUri = oauther2Config.getIgnoreUri();
-        List<String> ignoreList = Arrays.asList(ignoreUri);
-        if (ignoreList.contains(requestUrl)) {
+        List<String> ignoreUriList = oauther2Config.getIgnoreUriList();
+        if (!CollectionUtils.isEmpty(ignoreUriList) && ignoreUriList.contains(requestUrl)) {
+            log.info("白名单放行");
             return chain.filter(exchange);
         }
         String token = getToken(exchange);
         if (StringUtils.isBlank(token)) {
+            log.error("无效token");
             return Mono.error(new InvalidTokenException("无效token"));
         }
         OAuth2AccessToken oAuth2AccessToken = tokenStore.readAccessToken(token);
         Map<String, Object> additionalInformation = oAuth2AccessToken.getAdditionalInformation();
         String username = additionalInformation.get("user_name").toString();
-        List<String> authories = (List<String>)additionalInformation.get("authorities");
-        //将用户信息封装到请求头
+        List<String> authories = (List<String>) additionalInformation.get("authorities");
+        //将用户信息封装到请求头，也可以采用base64进行加密放一个请求头中，微服务采用过滤器进行解密
         ServerHttpRequest tokenRequest = exchange.getRequest().mutate()
                 .header("username", username)
-                .header("authorities",authories.toString()).build();
+                .header("authorities", JSON.toJSONString(authories)).build();
         ServerWebExchange exchangeNew = exchange.mutate().request(tokenRequest).build();
 
         return chain.filter(exchangeNew);
@@ -68,7 +69,11 @@ public class RequestHeaderSetFilter implements GlobalFilter{
             return null;
         }
         String bear = authorization.get(0);
-        String token = bear.substring(bear.lastIndexOf("Bearer "));
-        return token;
+        if (bear.contains("Bearer ")) {
+            String token = bear.substring("Bearer ".length());
+            log.info("token:{}",token);
+            return token;
+        }
+        return null;
     }
 }

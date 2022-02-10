@@ -27,6 +27,7 @@ import java.nio.charset.Charset;
 public class JwtServerAccessDeniedHandler implements ServerAccessDeniedHandler {
     @Override
     public Mono<Void> handle(ServerWebExchange serverWebExchange, AccessDeniedException e) {
+        log.error("无访问权限");
         ServerHttpResponse response = serverWebExchange.getResponse();
         response.setStatusCode(HttpStatus.OK);
         response.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);

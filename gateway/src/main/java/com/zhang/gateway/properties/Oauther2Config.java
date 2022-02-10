@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -17,4 +18,12 @@ import java.util.List;
 @ConfigurationProperties(prefix = "oauther2")
 public class Oauther2Config {
     String[] ignoreUri;
+
+    public List<String> getIgnoreUriList() {
+        if (ignoreUri != null && ignoreUri.length > 0) {
+            List<String> ignoreList = Arrays.asList(ignoreUri);
+            return ignoreList;
+        }
+        return null;
+    }
 }

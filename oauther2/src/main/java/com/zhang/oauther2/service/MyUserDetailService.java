@@ -27,7 +27,7 @@ public class MyUserDetailService implements UserDetailsService {
         MyUser user = new MyUser();
         user.setUserName(username);
         user.setPassword(this.passwordEncoder.encode("123456"));
-        String role = "ROLE_ADMIN";
+        String role = "admin";
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(role));
 //        return new User(username, user.getPassword(), user.isEnabled(),

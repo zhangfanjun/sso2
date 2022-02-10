@@ -26,6 +26,7 @@ import java.nio.charset.Charset;
 public class JwtServerAuthenticationEntryPoint implements ServerAuthenticationEntryPoint {
     @Override
     public Mono<Void> commence(ServerWebExchange serverWebExchange, AuthenticationException e) {
+        log.error("无效和过期令牌的处理");
         ServerHttpResponse response = serverWebExchange.getResponse();
         response.setStatusCode(HttpStatus.OK);
         response.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
