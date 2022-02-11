@@ -34,12 +34,12 @@
             u.id,
             u.user_name,
             u.`password`,
-            r.id as roleId,
+            r.id AS roleId,
             r.role_name,
             r.`code`
         FROM
-            sso_user_role re
-            INNER JOIN sso_user u ON re.user_id = u.id
+            sso_user u
+            LEFT JOIN sso_user_role re ON re.user_id = u.id
             INNER JOIN sso_role r ON re.role_id = r.id
         WHERE
             r.STATUS = 1
