@@ -3,11 +3,10 @@
  * 未经本公司正式书面同意，其他任何个人、团体不得使用、复制、修改或发布本软件.
  * 版权所有深圳金雅福控股集团有限公司 www.jinyafu.com.
  */
-package com.zhang.common.api.feign;
+package com.zhang.common.api.oauther2;
 
 
-import com.zhang.common.api.feign.fallback.OautherRemoteFallback;
-import feign.Headers;
+import com.zhang.common.api.oauther2.fallback.OautherRemoteFallback;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;

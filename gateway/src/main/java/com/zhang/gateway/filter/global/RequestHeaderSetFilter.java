@@ -1,6 +1,7 @@
 package com.zhang.gateway.filter.global;
 
 import com.alibaba.fastjson.JSON;
+import com.zhang.common.model.constant.HeaderConstant;
 import com.zhang.gateway.properties.Oauther2Properties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -56,8 +57,8 @@ public class RequestHeaderSetFilter implements GlobalFilter {
         List<String> authories = (List<String>) additionalInformation.get("authorities");
         //将用户信息封装到请求头，也可以采用base64进行加密放一个请求头中，微服务采用过滤器进行解密
         ServerHttpRequest tokenRequest = exchange.getRequest().mutate()
-                .header("username", username)
-                .header("authorities", JSON.toJSONString(authories)).build();
+                .header(HeaderConstant.HEADER_USER_NAME, username)
+                .header(HeaderConstant.HEADER_AUTHORITIES, JSON.toJSONString(authories)).build();
         ServerWebExchange exchangeNew = exchange.mutate().request(tokenRequest).build();
 
         return chain.filter(exchangeNew);

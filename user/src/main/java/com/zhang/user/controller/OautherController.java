@@ -1,8 +1,9 @@
 package com.zhang.user.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.zhang.common.api.feign.OautherRemote;
-import com.zhang.common.model.base.ResoponseVO;
+import com.zhang.common.api.oauther2.OautherRemote;
+import com.zhang.common.model.constant.HeaderConstant;
+import com.zhang.common.model.module.base.ResoponseVO;
 import com.zhang.user.model.LoginDTO;
 import com.zhang.user.model.RefreshTokenDTO;
 import com.zhang.user.model.TokenVO;
@@ -12,11 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Objects;
@@ -44,8 +41,6 @@ public class OautherController {
         Object result = oautherRemote.postAccessToken(multiValueMap);
         TokenVO tokenVO = null;
         if(Objects.nonNull(result)) {
-            String s = JSON.toJSONString(result);
-            log.info("response:{}",s);
             tokenVO = JSON.parseObject(JSON.toJSONString(result), TokenVO.class);
         }
         if (Objects.isNull(tokenVO)) {
@@ -74,12 +69,22 @@ public class OautherController {
     }
 
     @PostMapping("/httpLogin")
-    public String httpLogin(){
+    public ResoponseVO httpLogin(){
         String url = "http://127.0.0.1:8800/oauther2/oauth/token?grant_type=password&username=aa&password=123456&scope=ROLE_ADMIN&client_id=app-one&client_secret=123";
         String re = HttpUtil.remotePost(url, null, null);
-        return re;
+        TokenVO tokenVO = null;
+        if(Objects.nonNull(re)) {
+            tokenVO = JSON.parseObject(re, TokenVO.class);
+        }
+        if (Objects.isNull(tokenVO)) {
+            return ResoponseVO.fault("异常",re);
+        }
+        return ResoponseVO.success(tokenVO);
     }
 
-
-
+    @PostMapping("/loginOut")
+    public ResoponseVO loginOut(@RequestHeader(HeaderConstant.HEADER_USER_NAME) String userName){
+        //根据账号，将用户进行退出登录处理
+        return ResoponseVO.success("");
+    }
 }

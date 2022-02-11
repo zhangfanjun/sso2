@@ -1,4 +1,4 @@
-package com.zhang.common.model.base;
+package com.zhang.common.model.module.base;
 
 import lombok.Data;
 

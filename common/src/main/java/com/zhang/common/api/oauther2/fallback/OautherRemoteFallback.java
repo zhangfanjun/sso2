@@ -1,6 +1,6 @@
-package com.zhang.common.api.feign.fallback;
+package com.zhang.common.api.oauther2.fallback;
 
-import com.zhang.common.api.feign.OautherRemote;
+import com.zhang.common.api.oauther2.OautherRemote;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 
