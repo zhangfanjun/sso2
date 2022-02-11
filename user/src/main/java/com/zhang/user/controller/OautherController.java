@@ -8,7 +8,7 @@ import com.zhang.user.model.LoginDTO;
 import com.zhang.user.model.RefreshTokenDTO;
 import com.zhang.user.model.TokenVO;
 import com.zhang.user.properties.UserBaseProperties;
-import com.zhang.user.util.HttpUtil;
+import com.zhang.common.util.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.LinkedMultiValueMap;
@@ -36,8 +36,8 @@ public class OautherController {
         multiValueMap.add("password", in.getPassword());
         multiValueMap.add("grant_type", "password");
         multiValueMap.add("scope", "all");
-        multiValueMap.add("client_id", "user");
-        multiValueMap.add("client_secret", "123");
+        multiValueMap.add("client_id", userBaseProperties.getClientId());
+        multiValueMap.add("client_secret", userBaseProperties.getClientSecret());
         Object result = oautherApi.postAccessToken(multiValueMap);
         TokenVO tokenVO = null;
         if(Objects.nonNull(result)) {
@@ -55,8 +55,8 @@ public class OautherController {
         multiValueMap.add("refresh_token", in.getRefreshToken());
         multiValueMap.add("grant_type", "refresh_token");
         multiValueMap.add("scope", "all");
-        multiValueMap.add("client_id", "user");
-        multiValueMap.add("client_secret", "123");
+        multiValueMap.add("client_id", userBaseProperties.getClientId());
+        multiValueMap.add("client_secret", userBaseProperties.getClientSecret());
         Object result = oautherApi.postAccessToken(multiValueMap);
         TokenVO tokenVO = null;
         if(Objects.nonNull(result)) {
