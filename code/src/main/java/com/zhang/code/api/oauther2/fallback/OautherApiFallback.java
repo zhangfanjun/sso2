@@ -1,6 +1,6 @@
-package com.zhang.common.api.oauther2.fallback;
+package com.zhang.code.api.oauther2.fallback;
 
-import com.zhang.common.api.oauther2.OautherRemote;
+import com.zhang.code.api.oauther2.OautherApi;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 
@@ -12,7 +12,7 @@ import org.springframework.util.MultiValueMap;
  */
 
 @Component
-public class OautherRemoteFallback implements OautherRemote {
+public class OautherApiFallback implements OautherApi {
 
 	@Override
 	public Object postAccessToken(MultiValueMap<String, String> map) {

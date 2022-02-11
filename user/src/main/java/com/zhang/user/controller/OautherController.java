@@ -1,7 +1,7 @@
 package com.zhang.user.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.zhang.common.api.oauther2.OautherRemote;
+import com.zhang.code.api.oauther2.OautherApi;
 import com.zhang.common.model.constant.HeaderConstant;
 import com.zhang.common.model.module.base.ResoponseVO;
 import com.zhang.user.model.LoginDTO;
@@ -26,7 +26,7 @@ public class OautherController {
     @Autowired
     private UserBaseProperties userBaseProperties;
     @Resource
-    private OautherRemote oautherRemote;
+    private OautherApi oautherApi;
 
     @PostMapping("/login")
     public ResoponseVO login(@RequestBody LoginDTO in){
@@ -38,7 +38,7 @@ public class OautherController {
         multiValueMap.add("scope", "all");
         multiValueMap.add("client_id", "user");
         multiValueMap.add("client_secret", "123");
-        Object result = oautherRemote.postAccessToken(multiValueMap);
+        Object result = oautherApi.postAccessToken(multiValueMap);
         TokenVO tokenVO = null;
         if(Objects.nonNull(result)) {
             tokenVO = JSON.parseObject(JSON.toJSONString(result), TokenVO.class);
@@ -57,7 +57,7 @@ public class OautherController {
         multiValueMap.add("scope", "all");
         multiValueMap.add("client_id", "user");
         multiValueMap.add("client_secret", "123");
-        Object result = oautherRemote.postAccessToken(multiValueMap);
+        Object result = oautherApi.postAccessToken(multiValueMap);
         TokenVO tokenVO = null;
         if(Objects.nonNull(result)) {
             tokenVO = JSON.parseObject(JSON.toJSONString(result), TokenVO.class);

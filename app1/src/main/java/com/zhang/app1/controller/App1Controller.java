@@ -1,7 +1,9 @@
 package com.zhang.app1.controller;
 
-import com.netflix.ribbon.proxy.annotation.Http;
+import com.zhang.code.api.user.UserInfoApi;
+import com.zhang.common.model.module.base.ResoponseVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -15,7 +17,7 @@ import java.util.HashMap;
 @Slf4j
 @RequestMapping("/user")
 @RestController
-public class UserController {
+public class App1Controller {
 
     @PostMapping("/login")
     public Object login(){
@@ -30,4 +32,14 @@ public class UserController {
         re.put("authorities",authorities);
         return re;
     }
+
+    @Autowired
+    private UserInfoApi userInfoApi;
+
+    @PostMapping("/toUser")
+    public ResoponseVO toUser(){
+        ResoponseVO resoponseVO = userInfoApi.returnUserName();
+        return resoponseVO;
+    }
+
 }

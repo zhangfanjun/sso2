@@ -27,7 +27,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.zhang</groupId>
-			<artifactId>common</artifactId>
+			<artifactId>code</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<!--		notnull注解-->
