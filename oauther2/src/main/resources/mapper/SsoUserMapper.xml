@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhang.oauther2.mysql.mapper.SsoUserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zhang.oauther2.mysql.entity.SsoUser">
+    <result column="id" property="id" />
+        <result column="user_name" property="userName" />
+        <result column="password" property="password" />
+        <result column="nickname" property="nickname" />
+        <result column="sex" property="sex" />
+        <result column="open_id" property="openId" />
+        <result column="app_id" property="appId" />
+        <result column="mobile" property="mobile" />
+        <result column="email" property="email" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="delete" property="delete" />
+    </resultMap>
+
+    <resultMap id = "getUserInfoByUserNameMap" type = "com.zhang.oauther2.model.UserInfo">
+        <result column="id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="password" property="password"/>
+        <collection property = "rolesList" ofType="com.zhang.oauther2.mysql.entity.SsoRole">
+            <result column="roleId" property="id"/>
+            <result column="role_name" property="roleName"/>
+            <result column="code" property="code"/>
+        </collection>
+    </resultMap>
+
+    <select id = "getUserInfoByUserName" resultMap="getUserInfoByUserNameMap">
+        SELECT
+            u.id,
+            u.user_name,
+            u.`password`,
+            r.id as roleId,
+            r.role_name,
+            r.`code`
+        FROM
+            sso_user_role re
+            INNER JOIN sso_user u ON re.user_id = u.id
+            INNER JOIN sso_role r ON re.role_id = r.id
+        WHERE
+            r.STATUS = 1
+            AND u.DELETE = 0
+            AND u.user_name = #{userName};
+    </select>
+</mapper>
