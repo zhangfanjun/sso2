@@ -19,40 +19,15 @@ public class Gener {
     private static String driverName = "com.mysql.cj.jdbc.Driver";
     private static String username = "root";
     private static String password = "root";
-    //表名，多个英文逗号分割
-    private static String tableName = "user";
-    /**
-     * 官网生成代码示例，版本3.5.1
-     * @author zfj
-     * @date 2021/12/29 16:34
-     */
-//    public static void example() {
-//        FastAutoGenerator.create(url, username, password)
-//                .globalConfig(builder -> {
-//                    builder.author("baomidou") // 设置作者
-//                            .enableSwagger() // 开启 swagger 模式
-//                            .fileOverride() // 覆盖已生成文件
-//                            .outputDir("D://"); // 指定输出目录
-//                })
-//                .packageConfig(builder -> {
-//                    builder.parent("com.baomidou.mybatisplus.samples.generator") // 设置父包名
-//                            .moduleName("system") // 设置父包模块名
-//                            .pathInfo(Collections.singletonMap(OutputFile.mapperXml, "D://")); // 设置mapperXml生成路径
-//                })
-//                .strategyConfig(builder -> {
-//                    builder.addInclude("user"); // 设置需要生成的表名
-////                            .addTablePrefix("t_", "c_"); // 设置过滤表前缀
-//                })
-//                .templateEngine(new FreemarkerTemplateEngine()) // 使用Freemarker引擎模板，默认的是Velocity引擎模板
-//                .execute();
-//    }
+    private static String[] tableName = {"sso_role","sso_permission","sso_permission_role","sso_user","sso_user_role"};
 
     public static void main(String[] args) {
         example();
     }
 
-
-
+    /**
+     * 注意，一定要添加freemarker的包，因为引擎是采用freemarker
+     */
     public static void example() {
         // 代码生成器
         AutoGenerator mpg = new AutoGenerator();
@@ -81,7 +56,7 @@ public class Gener {
         mpg.setDataSource(dsc);
         PackageConfig pc = new PackageConfig();
         //父类包名;如果是springboot项目一定要输入Application的父类包名
-        pc.setParent("com.jinyafu.custom.entity.core");
+        pc.setParent("com.zhang.user.entity");
 //        pc.setServiceImpl("service");
         // 包配置
 //        pc.setModuleName("模块名");
