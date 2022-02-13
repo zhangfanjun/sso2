@@ -7,7 +7,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
-//@EnableDiscoveryClient
+@EnableDiscoveryClient
 @EnableFeignClients
 @MapperScan("com.zhang.oauther2.mysql.mapper")
 public class Oauther2Application {
